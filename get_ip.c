@@ -34,18 +34,17 @@ int main(int argc, char *argv[])
         ipv = (struct sockaddr *) p->ai_addr;
         //IP4
         if (p->ai_family == AF_INET) {
-            ipVersion = "IPv4";
+            ipVersion = (char *) "IPv4";
             ipv4 = (struct sockaddr_in *) p->ai_addr;
             address = &(ipv4->sin_addr);
         //IP6
         } else {
-            ipVersion = "IPv6";
+            ipVersion = (char *) "IPv6";
             ipv6 = (struct sockaddr_in6 *) p->ai_addr;
             address = &(ipv6->sin6_addr);
         }
         
         inet_ntop(p->ai_family, address, ip_str, sizeof ip_str);
         printf("%s : %s\n\n", ip_str, ipVersion); 
-
     }
 }
