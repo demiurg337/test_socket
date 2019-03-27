@@ -60,12 +60,12 @@ int main()
     for (p = servInfo; p != NULL; p = p->ai_next) {
     }
 
-    if ((socket_fd = socket(servInfo->ai_family, servInfo->ai_socktype, servInfo->ai_protocol)) != 0) {
+    if ((socket_fd = socket(servInfo->ai_family, servInfo->ai_socktype, servInfo->ai_protocol)) == -1) {
         perror("Can't create socker !");
         exit(1);
     }
 
-    if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &op_ok, sizeof(int)) != 0) {
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &op_ok, sizeof(int)) == -1) {
         perror("Can't set the option !");
         exit(2);
     }
