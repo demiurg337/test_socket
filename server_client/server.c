@@ -33,8 +33,15 @@ void *get_in_addr_of_spec_type(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *) sa)->sin6_addr);
 }
 
-int main()
+void log(const char* msg)
 {
+    printf("INFO: %s", msg);
+}
+
+int main(int argc, char** argv)
+{
+    log("start ...");
+    /*
     //for receiving signals
     struct sigaction sigAction;
     int socket_fd, 
@@ -110,15 +117,14 @@ int main()
 
         printf("Was connected %s", connHostName);
         //Creation of child process
-        /*
-        Like I understood forked process 
-        start his executing from the same place where
-        was father process
-        */
+        
+        //Like I understood forked process 
+        //start his executing from the same place where
+        //was father process
+        
         if (!fork()) {
-            /*
-            This is code for which will be executed for child process
-            */
+            //This is code for which will be executed for child process
+            
             close(socket_fd);
             if (send(acceptSock_fd, "Message to client !", 13, 0) != 0) {
                 perror("Error of sending !");
@@ -130,6 +136,6 @@ int main()
         //and after first message close father socket
         close(socket_fd);
     }
-
+    */
     return 0;
 }
