@@ -13,8 +13,10 @@
 #include <unistd.h>
 
 #define PORT "3940"
-#define MAX_CONNECT 10
+#define MAX_PENDING_CONNECT 10
 
+enum LogLvl {Info, Warn, Err};
+/*
 void sig_handler(int s)
 {
     // we don't need to know potential errorno from waitpid
@@ -32,15 +34,50 @@ void *get_in_addr_of_spec_type(struct sockaddr *sa)
 
     return &(((struct sockaddr_in6 *) sa)->sin6_addr);
 }
-
-void log(const char* msg)
+*/
+void log(const char* msg, const LogLvl lvl)
 {
-    printf("INFO: %s", msg);
+    printf("INFO: %s\n", msg);
 }
 
 int main(int argc, char** argv)
 {
-    log("start ...");
+    log("start ...", Info);
+    int port_num = 1500;
+
+    int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (socket_fd < 0) {
+       log("Error on creation of socket !", Err); 
+    }
+
+    int val {1};
+    // for preventing "this addres alredy in use", when close previous server
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) < 0) {
+    //if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0) { //c99
+        log("Can't set option for socket !", Err);
+        exit(1);
+    }
+
+    struct sockaddr_in server_addr;
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    //??????????
+    //INADDR_ANY - 0.0.0.0.0
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    //The port number field in struct sockaddr_in is stored in network byte order. This means that you must use htons()
+    server_addr.sin_port = htons(port_num);
+
+    if (bind(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        log("Can't bind !", Err);
+        exit(1);
+    }
+
+    if (listen(socket_fd, MAX_PENDING_CONNECT) < 0) {
+        log("Can't start listen !", Err);
+        exit(1);
+    } 
+
     /*
     //for receiving signals
     struct sigaction sigAction;
